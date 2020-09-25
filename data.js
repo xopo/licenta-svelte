@@ -29,7 +29,7 @@ export const materials = [
         slug: 'importance_seo_marketing',
         url: 'https://pdfs.semanticscholar.org/b2cb/1e144b39945b45acc9d3f66e17134c9e70da.pdf',
         type: 'pdf',
-        file: '/materials/importance_of_SEM.pdf'
+        file: '/materials/importance_of_sem.pdf'
     },
     {
         name: 'Comprehensive Search Engine Optimization Model for Commercial Websites: Surgeon’s Website in Sydney',
