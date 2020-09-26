@@ -2,6 +2,7 @@
     import { onDestroy } from 'svelte';
     import { newdoc } from '../stores/store.js';
     import { slugify } from '../helper.js';
+    import ajax from 'ajax';
 
     let formData;
     export let formOpen = true;
@@ -15,34 +16,35 @@
       formInvalid: true
     };
 
-    function uploadFile({target: {value}}) {
-      const extension = value.split('.').reverse()[0];
-      formState.fileInvalid = extension !== 'pdf';
-    }
-
     function submitForm(ev) {
       ev.preventDefault();
-      console.log('form is submited')
+      const result = ajax.postJSON('materials', formData)
+      console.log('form is submited', result.json())
     }
 
     function validateForm({target: {name, value}}) {
       // validate for correct content
       switch (name) {
         case 'name': 
+          formState.nameInvalid = !value.trim().length;
           if (!value.trim().length) {
-            formState.nameInvalid = true;
             newdoc.update(model => Object.assign({}, model, {'name': '', 'slug': ''}))
           } else {
-            formState.nameInvalid = false;
             newdoc.update(model => Object.assign({}, model, {'name': value.trim()}));
             newdoc.update(model => Object.assign({}, model, {'slug': slugify(value)}));
           }
+          break;
+        case 'file': 
+          const extension = value.split('.').reverse()[0];
+          const invalidFile = extension !== 'pdf'
+          
+          formState.fileInvalid = invalidFile;
+          newdoc.update(model => Object.assign({}, model, {'file': invalidFile ? '' : value.trim()}));
       }
       
       // then set form state valid or invalid if invalid or contains empty fields
       formState.formInvalid = Object.keys(formState).some(key => key!=='formInvalid' && formState[key] === true) || 
             Object.keys(formData).some(key => !formData[key].trim().length);
-      console.info({formState, formData})
     }
 
     const closeForm = _ => formOpen = false;
@@ -115,8 +117,7 @@
                 class="file-input is-small" 
                 bind:value={$newdoc.file}  
                 type="file" 
-                on:change={uploadFile}
-                name="pdf">
+                name="file">
             <span class="file-cta">
                 <span class="file-icon">
                 <i class="fas fa-upload"></i>

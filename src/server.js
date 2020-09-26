@@ -10,6 +10,15 @@ const baseUrl = dev ? '/' : '/licence';
 
 polka() // You can also use Express
 .use(json())
+.post('/materials', (req, res, next) => {
+	res.setHeader('Content-Type', 'application/json')
+	/* Retrieves the data */
+	var data = req.body
+	// Do something with the data...
+	console.log('server', {data, body: req.body});
+	/* Returns the result */
+	return res.end(JSON.stringify({ success: true }))
+})
 .use(
 	baseUrl,
 	compression({ threshold: 0 }),
